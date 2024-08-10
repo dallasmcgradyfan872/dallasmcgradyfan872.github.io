@@ -53,11 +53,11 @@
     }
 
     .container .broken-image-wrapper {
-      grid-column: 1; /* Position broken image in the first column */
       display: flex;
       justify-content: center;
       align-items: center; /* Center vertically */
       margin-top: -50px; /* Adjust margin to lower the broken image slightly */
+      grid-column: auto / span 1; /* Make sure broken image does not span more than one column */
     }
 
     /* Media queries for responsiveness */
@@ -70,27 +70,12 @@
     @media (max-width: 768px) {
       .container {
         grid-template-columns: 1fr; /* Single column layout for small screens */
+        grid-auto-rows: auto; /* Adjust row height automatically for smaller screens */
       }
 
       .container .broken-image-wrapper {
+        grid-column: auto; /* Ensure broken image occupies its own column */
         margin-top: 0; /* Adjust margin for smaller screens */
-      }
-
-      /* Ensure broken image stays on the same line as photo3 on mobile */
-      .container img:nth-child(4) {
-        grid-column: span 1; /* Span 1 column */
-      }
-      
-      .container img:nth-child(5) {
-        grid-column: span 1; /* Span 1 column */
-      }
-      
-      .container img:nth-child(6) {
-        grid-column: span 1; /* Span 1 column */
-      }
-      
-      .container .broken-image-wrapper {
-        grid-column: 4; /* Move broken image to the right column on mobile */
       }
     }
     </style>
