@@ -1,21 +1,37 @@
-
-
-<html>
-    <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="1;url=/index">
+    <title>Redirecting...</title>
     <style>
-    body {
-      background-image: url('/assets/images/damned.png');
-      background-size: 2000px; 
-    }
-    
+        body {
+            background-image: url('/assets/images/damned.png');
+            background-size: cover; /* Ensure background image covers the page */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+        }
+
+        img {
+            width: 390px;
+            height: 615px;
+            object-fit: cover; /* Maintain aspect ratio */
+        }
+
+        /* Media queries for responsiveness */
+        @media (max-width: 768px) {
+            img {
+                width: 100%; /* Responsive width */
+                height: auto; /* Maintain aspect ratio */
+            }
+        }
     </style>
-    </head>
-
-    </html>
-
-  </font>  
-  <font size="7">  
-  <img src="/assets/images/photo4.jpg" alt="photo4.jpg" width="390" height="615" style="float:middle;margin-left:800px;margin-top:158px"></img>
-  <center>
-  
-
+</head>
+<body>
+    <img src="/assets/images/photo4.jpg" alt="photo4.jpg">
+</body>
+</html>

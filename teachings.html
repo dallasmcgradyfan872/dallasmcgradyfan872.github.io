@@ -22,12 +22,25 @@
       background-image: url('/assets/images/dallads.png');
       background-repeat: repeat;
       background-attachment: fixed;  
-      background-size: 100px; 
+      background-size: 100px;
+    }
+
+    /* Apply fade-in effect to everything except the specified content */
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 0.4s ease-in forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
     }
     </style>
     </head>
-
-    </html>
+    <body>
+    
+    <div class="fade-in">
 
   </font>  
   <font size="7">  

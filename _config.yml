@@ -32,6 +32,8 @@ keep_files: [assets]
 
 include: [_pages]
 
+exclude: [_site]
+
 sass:
   quiet_deps: true
 
