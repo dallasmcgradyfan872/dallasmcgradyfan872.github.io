@@ -53,7 +53,7 @@
     }
 
     .container .broken-image-wrapper {
-      grid-column: 1; /* Position broken image in the first column */
+      grid-column: span 1; /* Ensure broken image takes up one grid column */
       display: flex;
       justify-content: center;
       align-items: center; /* Center vertically */
@@ -74,6 +74,14 @@
 
       .container .broken-image-wrapper {
         margin-top: 0; /* Adjust margin for smaller screens */
+      }
+    }
+
+    /* Ensure images are positioned correctly on mobile */
+    @media (max-width: 768px) {
+      .container img {
+        width: 100%; /* Ensure images take full width on mobile */
+        height: auto; /* Maintain aspect ratio */
       }
     }
     </style>
