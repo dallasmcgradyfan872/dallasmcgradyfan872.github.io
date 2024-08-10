@@ -53,11 +53,11 @@
     }
 
     .container .broken-image-wrapper {
+      grid-column: span 1; /* Adjust broken image to span one column */
       display: flex;
       justify-content: center;
       align-items: center; /* Center vertically */
       margin-top: -50px; /* Adjust margin to lower the broken image slightly */
-      grid-column: auto / span 1; /* Make sure broken image does not span more than one column */
     }
 
     /* Media queries for responsiveness */
@@ -69,12 +69,11 @@
 
     @media (max-width: 768px) {
       .container {
-        grid-template-columns: 1fr; /* Single column layout for small screens */
-        grid-auto-rows: auto; /* Adjust row height automatically for smaller screens */
+        grid-template-columns: repeat(2, 1fr); /* Two columns layout for small screens */
       }
 
       .container .broken-image-wrapper {
-        grid-column: auto; /* Ensure broken image occupies its own column */
+        grid-column: span 1; /* Ensure broken image spans one column */
         margin-top: 0; /* Adjust margin for smaller screens */
       }
     }
@@ -128,6 +127,3 @@
   </script>
 </body>
 </html>
-
-
-
