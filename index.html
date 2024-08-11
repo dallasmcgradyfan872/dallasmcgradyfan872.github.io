@@ -12,8 +12,6 @@
             margin: 0;
             padding: 0;
             height: 100vh; /* Full viewport height */
-            overflow: hidden; /* Hide overflow to prevent scrolling */
-            visibility: hidden; /* Hide content initially */
         }
 
         .fade-in {
@@ -43,46 +41,36 @@
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const redirectPath = '/index';
-            const currentPath = window.location.pathname;
+            let timeout;
+            const textElement = document.querySelector('.hidden-text');
 
-            if (currentPath === redirectPath) {
-                window.location.replace('/'); // Redirect to root
-            } else {
-                // Set body visibility to visible for proper content display
-                document.body.style.visibility = 'visible';
-
-                let timeout;
-                const textElement = document.querySelector('.hidden-text');
-
-                function showText() {
-                    textElement.classList.add('text-visible');
-                }
-
-                function hideText() {
-                    textElement.classList.remove('text-visible');
-                }
-
-                function resetTimeout() {
-                    hideText(); // Hide text on any interaction
-                    clearTimeout(timeout);
-                    timeout = setTimeout(showText, 60000); // 1 minute in milliseconds
-                }
-
-                // Set up event listeners to reset the timeout and hide the text
-                document.addEventListener('mousemove', resetTimeout);
-                document.addEventListener('scroll', resetTimeout);
-                document.addEventListener('keydown', resetTimeout);
-                document.addEventListener('mousedown', resetTimeout);
-
-                // Initialize timeout
-                resetTimeout();
-
-                // Handle clicks on the hidden text
-                textElement.addEventListener('click', function() {
-                    window.location.href = '/computer';
-                });
+            function showText() {
+                textElement.classList.add('text-visible');
             }
+
+            function hideText() {
+                textElement.classList.remove('text-visible');
+            }
+
+            function resetTimeout() {
+                hideText(); // Hide text on any interaction
+                clearTimeout(timeout);
+                timeout = setTimeout(showText, 60000); // 1 minute in milliseconds
+            }
+
+            // Set up event listeners to reset the timeout and hide the text
+            document.addEventListener('mousemove', resetTimeout);
+            document.addEventListener('scroll', resetTimeout);
+            document.addEventListener('keydown', resetTimeout);
+            document.addEventListener('mousedown', resetTimeout);
+
+            // Initialize timeout
+            resetTimeout();
+
+            // Handle clicks on the hidden text
+            textElement.addEventListener('click', function() {
+                window.location.href = '/computer';
+            });
         });
     </script>
 </head>
