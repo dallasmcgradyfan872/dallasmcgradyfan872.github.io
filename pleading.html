@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="1;url=/index">
+    <meta http-equiv="refresh" content="3;url=/index">
     <title>Redirecting...</title>
     <style>
         body {
@@ -36,7 +36,9 @@
         // Redirect if accessed directly (not through a referrer)
         window.addEventListener('DOMContentLoaded', (event) => {
             if (document.referrer === '') {
-                window.location.href = '/index';
+                setTimeout(() => {
+                    window.location.href = '/index';
+                }, 100); // Delay redirect slightly for better compatibility
             } else {
                 document.querySelector('img').style.display = 'block';
             }
