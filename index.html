@@ -44,6 +44,11 @@
             let timeout;
             const textElement = document.querySelector('.hidden-text');
 
+            // Redirect /index to the root page
+            if (window.location.pathname === '/index') {
+                window.location.href = '/';
+            }
+
             function showText() {
                 textElement.classList.add('text-visible');
             }
