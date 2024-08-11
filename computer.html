@@ -22,10 +22,16 @@
             text-align: center;
         }
 
-        .image-container img {
+        .image-wrapper {
+            display: inline-block; /* Ensure the wrapper sizes to the image */
+        }
+
+        .image-wrapper img {
             width: 585px;
             height: auto;
-            pointer-events: none; /* Prevent mouse interactions with the image */
+            /* Prevent any visual feedback or interactions */
+            user-select: none; /* Prevent text selection */
+            pointer-events: none; /* Prevent mouse interactions */
         }
 
         .overlay {
@@ -56,7 +62,9 @@
 </head>
 <body>
     <div class="image-container">
-        <img src="/assets/images/computer.png" alt="computer.png">
+        <div class="image-wrapper">
+            <img src="/assets/images/computer.png" alt="computer.png">
+        </div>
         <div class="overlay">
             <div id="loading-text">SEARCH</div>
             <input type="text" id="search-bar" placeholder="TYPE HERE...">
