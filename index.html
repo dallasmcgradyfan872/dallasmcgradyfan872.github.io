@@ -1,63 +1,120 @@
-<center><h1><span style="color: rgb(255, 255, 255);">mcgradyfansite</span></h1></center>
-<font size="4">  
-  <center><p><span style="color: rgb(255, 255, 255);"><em>"In the image of Dallas McGrady we created them, the sigmas. <br />
-  
-    A Sigma must follow the way of the Sigma. <br />
-    
-    Dallas Mcgrady said, what is up my Rizzlers, go forth and vibe in this sigma paradise i so forth built"</em><br />
-  <font size="5">  
-  <b><em>- Dallas Mcgrady</em></b></span></p>
-
-  <font size="6">  
-  <b><div class="trigger"><a class="page-link" href="/index"><span style="color: rgb(255, 255, 255);">Home</span></a>
-  <a class="page-link" href="/teachings"><span style="color: rgb(255, 255, 255);">Teachings</span></a>
-  <a class="page-link" href="/images"><span style="color: rgb(255, 255, 255);">Images</span></a>
-  <a class="page-link" href="/funfacts"><span style="color: rgb(255, 255, 255);">Fun Facts</span></a></b></div>
-<hr>
-
-<html>
-    <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-    body {
-      background-image: url('/assets/images/dallads.png');
-      background-repeat: repeat;
-      background-attachment: fixed;  
-      background-size: 100px;
-    }
+        body {
+            background-image: url('/assets/images/dallads.png');
+            background-repeat: repeat;
+            background-attachment: fixed;
+            background-size: 100px;
+            margin: 0;
+            padding: 0;
+            height: 100vh; /* Full viewport height */
+        }
 
-    /* Apply fade-in effect to everything except the specified content */
-    .fade-in {
-      opacity: 0;
-      animation: fadeIn 0.4s ease-in forwards;
-    }
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.4s ease-in forwards;
+        }
 
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
-    }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .hidden-text {
+            color: rgba(255, 255, 255, 0);
+            transition: color 0.3s ease; /* Smooth transition */
+            cursor: pointer;
+        }
+
+        .hidden-text:hover {
+            color: rgba(255, 255, 255, 0.5); /* Slightly visible on hover */
+        }
+
+        .text-visible {
+            color: rgba(255, 255, 255, 0.5); /* Slightly visible when triggered */
+        }
     </style>
-    </head>
-    <body>
-    
-    <div class="fade-in">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let timeout;
+            const textElement = document.querySelector('.hidden-text');
 
-</font>  
-<font size="7"> 
-<p><span style="color: rgb(255, 255, 255);"><ins><b>Home</b></ins><br />
-<br />
-welcome to <b>mcgradyfansite!</b> <br />
-perfect place for all dallas fans, you will have wonderful time here. <br />
-make sure to explore website and tell your friends and families. <br />
-remember, enjoy always!<br />
-<br />
-<br />
-this website has <b>everything</b> for mcgrady fans! such as... <br />
-<br />
-- <em>teachings on how to become a true sigma, just like dallas!</em> <br />
-- <em>various beautiful images of the man himself, you're sure to love it!</em> <br />
-- <em>learn about some amazing fun facts, dallas has alot of knowledge to share!</em> <br />
-- <em>and much, much more!</em> <br />
-<span style="color:rgba(255, 255, 255, 0)">- <em>hearthecallingcallingcalli ng</em> <br /></span></p> 
-</center>
-</font>
+            function showText() {
+                textElement.classList.add('text-visible');
+            }
+
+            function hideText() {
+                textElement.classList.remove('text-visible');
+            }
+
+            function resetTimeout() {
+                hideText(); // Hide text on any interaction
+                clearTimeout(timeout);
+                timeout = setTimeout(showText, 60000); // 1 minute in milliseconds
+            }
+
+            // Set up event listeners to reset the timeout and hide the text
+            document.addEventListener('mousemove', resetTimeout);
+            document.addEventListener('scroll', resetTimeout);
+            document.addEventListener('keydown', resetTimeout);
+            document.addEventListener('mousedown', resetTimeout);
+
+            // Initialize timeout
+            resetTimeout();
+
+            // Handle clicks on the hidden text
+            textElement.addEventListener('click', function() {
+                window.location.href = '/computer';
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="fade-in">
+        <center>
+            <h1><span style="color: rgb(255, 255, 255);">mcgradyfansite</span></h1>
+            <font size="4">  
+                <p><span style="color: rgb(255, 255, 255);"><em>"In the image of Dallas McGrady we created them, the sigmas. <br />
+                A Sigma must follow the way of the Sigma. <br />
+                Dallas Mcgrady said, what is up my Rizzlers, go forth and vibe in this sigma paradise i so forth built"</em><br />
+                <font size="5">  
+                <b><em>- Dallas Mcgrady</em></b></span></p>
+
+                <font size="6">  
+                <b>
+                    <div class="trigger">
+                        <a class="page-link" href="/index"><span style="color: rgb(255, 255, 255);">Home</span></a>
+                        <a class="page-link" href="/teachings"><span style="color: rgb(255, 255, 255);">Teachings</span></a>
+                        <a class="page-link" href="/images"><span style="color: rgb(255, 255, 255);">Images</span></a>
+                        <a class="page-link" href="/funfacts"><span style="color: rgb(255, 255, 255);">Fun Facts</span></a>
+                    </div>
+                </b>
+                </font>
+                <hr>
+
+                <font size="7">
+                <p><span style="color: rgb(255, 255, 255);"><ins><b>Home</b></ins><br />
+                <br />
+                welcome to <b>mcgradyfansite!</b> <br />
+                perfect place for all dallas fans, you will have wonderful time here. <br />
+                make sure to explore website and tell your friends and families. <br />
+                remember, enjoy always!<br />
+                <br />
+                <br />
+                this website has <b>everything</b> for mcgrady fans! such as... <br />
+                <br />
+                - <em>teachings on how to become a true sigma, just like dallas!</em> <br />
+                - <em>various beautiful images of the man himself, you're sure to love it!</em> <br />
+                - <em>learn about some amazing fun facts, dallas has alot of knowledge to share!</em> <br />
+                - <em>and much, much more!</em> <br />
+                <span class="hidden-text">- <em>searchforthetruth</em> <br /></span></p> 
+            </center>
+        </font> 
+    </div>
+</body>
+</html>

@@ -1,28 +1,49 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-    body {
-      background-image: url('/assets/images/damned.png');
-      background-size: 2000px; 
-    }
+        body {
+            background-image: url('/assets/images/damned.png');
+            background-size: 2000px; 
+            overflow: hidden; /* Hide scrollbars */
+            height: 100vh; /* Full viewport height */
+            margin: 0;
+        }
+
+        /* Hide all content initially */
+        #content {
+            display: none;
+        }
     </style>
     <script>
-    document.addEventListener('mouseleave', function() {
-        const imgElement = document.querySelector('img');
-        imgElement.src = '/assets/images/photo6.png';
+        // Redirect if accessed directly (not through a referrer)
+        window.addEventListener('DOMContentLoaded', (event) => {
+            if (document.referrer === '') {
+                window.location.href = '/index';
+            } else {
+                document.getElementById('content').style.display = 'block';
+            }
+        });
 
-        setTimeout(function() {
-            window.location.href = '/index';
-        }, 300);
-    });
+        document.addEventListener('mouseleave', function() {
+            const imgElement = document.querySelector('img');
+            imgElement.src = '/assets/images/photo6.png';
+
+            setTimeout(function() {
+                window.location.href = '/index';
+            }, 300);
+        });
     </script>
 </head>
-
 <body>
-  <font size="7">  
-    <div style="text-align: center; margin-top: 158px;">
-        <img src="/assets/images/photo4.jpg" alt="photo4.jpg" width="390" height="615">
+    <div id="content">
+        <font size="7">  
+            <div style="text-align: center; margin-top: 158px;">
+                <img src="/assets/images/photo4.jpg" alt="photo4.jpg" width="390" height="615">
+            </div>
+        </font>
     </div>
-  </font>
 </body>
 </html>

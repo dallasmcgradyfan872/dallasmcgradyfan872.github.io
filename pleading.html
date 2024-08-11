@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0;url=/index"> <!-- Immediate redirection -->
+    <title>Redirecting...</title>
+    <style>
+        body {
+            background-color: black;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            opacity: 0; /* Initially hidden */
+            transition: opacity 2s ease-in; /* Fade-in effect over 2 seconds */
+            visibility: hidden; /* Hide content initially */
+        }
+
+        .image-container {
+            position: relative;
+            text-align: center;
+        }
+
+        .image-container img {
+            width: 585px;
+            height: auto;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 33%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+        }
+
+        #loading-text {
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        #search-bar {
+            display: none;
+            margin-top: 20px;
+            width: 300px;
+            height: 40px;
+            font-size: 18px;
+            text-align: center;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="image-container">
+        <img src="/assets/images/computer.png" alt="computer.png">
+        <div class="overlay">
+            <div id="loading-text">SEARCH</div>
+            <input type="text" id="search-bar" placeholder="TYPE HERE...">
+        </div>
+    </div>
+
+    <!-- Audio elements for key press sounds -->
+    <audio id="type-sound1" src="/assets/audio/sounds/type1.mp3"></audio>
+    <audio id="type-sound2" src="/assets/audio/sounds/type2.mp3"></audio>
+    <audio id="type-sound3" src="/assets/audio/sounds/type3.mp3"></audio>
+
+    <script>
+        // Check for direct access and redirect if needed
+        if (window.location.pathname === '/computer') {
+            window.location.replace('/index');
+        } else {
+            // Ensure the content is not visible initially
+            document.body.style.visibility = 'hidden';
+
+            let loadingText = document.getElementById('loading-text');
+            let searchBar = document.getElementById('search-bar');
+            let percentage = 0;
+
+            // Start fade-in animation and loading process
+            setTimeout(() => {
+                document.body.style.opacity = 1; // Fade in the body
+                document.body.style.visibility = 'visible'; // Make content visible
+
+                let loadingInterval = setInterval(() => {
+                    let increment = Math.floor(Math.random() * 4) + 2;
+                    percentage += increment;
+                    if (percentage > 100) percentage = 100;
+                    loadingText.innerHTML = `LOADING<br/>${percentage}%`;
+
+                    if (percentage >= 100) {
+                        clearInterval(loadingInterval);
+                        loadingText.innerHTML = 'SEARCH';
+                        searchBar.style.display = 'block';
+                    }
+                }, 100);
+            }, 500); // Delay before starting the fade-in
+
+            function playRandomSound() {
+                let sounds = [
+                    document.getElementById('type-sound1'),
+                    document.getElementById('type-sound2'),
+                    document.getElementById('type-sound3')
+                ];
+                let randomSound = sounds[Math.floor(Math.random() * sounds.length)];
+
+                // Play the selected sound
+                randomSound.currentTime = 0; // Reset sound to start
+                randomSound.play();
+            }
+
+            let keysPressed = new Set();
+            let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+            searchBar.addEventListener('keydown', (event) => {
+                if (!keysPressed.has(event.key)) {
+                    keysPressed.add(event.key);
+                    playRandomSound();
+                }
+            });
+
+            searchBar.addEventListener('keyup', (event) => {
+                keysPressed.delete(event.key);
+            });
+
+            searchBar.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    const searchText = searchBar.value.toLowerCase().trim();
+
+                    // Dictionary of search terms and corresponding responses
+                    const searchResponses = {
+                        'test': 'LOREM IPSUM',
+                        // Add more search terms and responses here
+                    };
+
+                    if (searchResponses[searchText]) {
+                        loadingText.innerHTML = searchResponses[searchText];
+                    } else {
+                        loadingText.innerHTML = 'UNKNOWN';
+                    }
+
+                    // Clear the search bar
+                    searchBar.value = '';
+                }
+            });
+
+            // Reset typing sound when page interaction occurs
+            document.addEventListener('mousemove', resetTypingSound);
+            document.addEventListener('scroll', resetTypingSound);
+            document.addEventListener('click', resetTypingSound);
+            document.addEventListener('keypress', resetTypingSound);
+
+            function resetTypingSound() {
+                // Reset the sound playing ability to ensure it continues to work
+                audioContext.close().then(() => {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                });
+            }
+        }
+    </script>
+</body>
+</html>
