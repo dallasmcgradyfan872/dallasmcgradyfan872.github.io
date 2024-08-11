@@ -1,8 +1,8 @@
-\<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="3;url=/index">
+    <meta http-equiv="refresh" content="1;url=/index">
     <title>Redirecting...</title>
     <style>
         body {
@@ -35,11 +35,11 @@
     <script>
         // Redirect if accessed directly (not through a referrer)
         window.addEventListener('DOMContentLoaded', (event) => {
-            if (document.referrer === '') {
-                setTimeout(() => {
-                    window.location.href = '/index';
-                }, 100); // Delay redirect slightly for better compatibility
+            if (performance.navigation.type === performance.navigation.TYPE_NAVIGATE && document.referrer === '') {
+                // Redirect back to /index if the user accessed directly via the address bar
+                window.location.href = '/index';
             } else {
+                // Show the image if accessed via the hidden hyperlink
                 document.querySelector('img').style.display = 'block';
             }
         });
