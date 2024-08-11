@@ -41,7 +41,6 @@
             color: rgba(255, 255, 255, 0.5); /* Slightly visible when triggered */
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-md5/0.7.3/md5.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const redirectPath = '/index';
@@ -52,18 +51,6 @@
             } else {
                 // Set body visibility to visible for proper content display
                 document.body.style.visibility = 'visible';
-
-                // Example build string; this could be a version number or timestamp
-                const buildString = 'example-build-string'; // Replace this with your build string
-
-                // Generate MD5 hash
-                const buildHash = md5(buildString);
-
-                // Append hash to <link> tag's href attribute
-                const linkElement = document.querySelector('link[href*="styles.css"]');
-                if (linkElement) {
-                    linkElement.href += `?v=${buildHash}`;
-                }
 
                 let timeout;
                 const textElement = document.querySelector('.hidden-text');
@@ -113,7 +100,7 @@
                 <font size="6">  
                 <b>
                     <div class="trigger">
-                        <a class="page-link" href=""><span style="color: rgb(255, 255, 255);">Home</span></a>
+                        <a class="page-link" href="/index"><span style="color: rgb(255, 255, 255);">Home</span></a>
                         <a class="page-link" href="/teachings"><span style="color: rgb(255, 255, 255);">Teachings</span></a>
                         <a class="page-link" href="/images"><span style="color: rgb(255, 255, 255);">Images</span></a>
                         <a class="page-link" href="/funfacts"><span style="color: rgb(255, 255, 255);">Fun Facts</span></a>
