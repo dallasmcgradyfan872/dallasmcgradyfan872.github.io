@@ -41,6 +41,7 @@
             color: rgba(255, 255, 255, 0.5); /* Slightly visible when triggered */
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-md5/0.7.3/md5.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const redirectPath = '/index';
@@ -51,6 +52,18 @@
             } else {
                 // Set body visibility to visible for proper content display
                 document.body.style.visibility = 'visible';
+
+                // Example build string; this could be a version number or timestamp
+                const buildString = 'example-build-string'; // Replace this with your build string
+
+                // Generate MD5 hash
+                const buildHash = md5(buildString);
+
+                // Append hash to <link> tag's href attribute
+                const linkElement = document.querySelector('link[href*="styles.css"]');
+                if (linkElement) {
+                    linkElement.href += `?v=${buildHash}`;
+                }
 
                 let timeout;
                 const textElement = document.querySelector('.hidden-text');
