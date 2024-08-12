@@ -27,7 +27,8 @@
         }
 
         .image-wrapper img {
-            width: 585px;
+            width: 100%;
+            max-width: 585px;
             height: auto;
             /* Prevent any visual feedback or interactions */
             user-select: none; /* Prevent text selection */
@@ -104,33 +105,54 @@
                         loadingText.innerHTML = 'SEARCH';
                         searchBar.style.display = 'block';
                     }
-                }, 500); // Delay before starting the fade-in
+                }, 100);
+            }, 500); // Delay before starting the fade-in
 
-            let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            function playRandomSound() {
+                let sounds = [
+                    document.getElementById('type-sound1'),
+                    document.getElementById('type-sound2'),
+                    document.getElementById('type-sound3')
+                ];
+                let randomSound = sounds[Math.floor(Math.random() * sounds.length)];
 
-            let typeSounds = [
-                document.getElementById('type-sound1'),
-                document.getElementById('type-sound2'),
-                document.getElementById('type-sound3')
-            ];
-            let unknownSound = document.getElementById('unknown-sound');
-            let activeSound = null; // Track the currently playing sound
+                // Stop all sounds and play the selected sound
+                sounds.forEach(sound => {
+                    sound.pause();
+                    sound.currentTime = 0;
+                });
 
-            function playSound(sound) {
-                if (activeSound) {
-                    activeSound.pause();
-                    activeSound.currentTime = 0;
-                }
-
-                activeSound = sound;
-                sound.play();
+                randomSound.play();
             }
 
+            function playUnknownSound() {
+                let unknownSound = document.getElementById('unknown-sound');
+                unknownSound.pause();
+                unknownSound.currentTime = 0;
+
+                // Apply a computer-like audio effect (simple low-pass filter)
+                let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                let source = audioContext.createMediaElementSource(unknownSound);
+                let filter = audioContext.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 1500; // Adjust the frequency as needed
+                source.connect(filter);
+                filter.connect(audioContext.destination);
+
+                unknownSound.play();
+            }
+
+            let keysPressed = new Set();
+
             searchBar.addEventListener('keydown', (event) => {
-                if (!event.repeat) { // Prevent repeated keydown events from causing overlap
-                    let randomSound = typeSounds[Math.floor(Math.random() * typeSounds.length)];
-                    playSound(randomSound);
+                if (!keysPressed.has(event.key) && event.key !== 'Enter') {
+                    keysPressed.add(event.key);
+                    playRandomSound();
                 }
+            });
+
+            searchBar.addEventListener('keyup', (event) => {
+                keysPressed.delete(event.key);
             });
 
             searchBar.addEventListener('keypress', function(event) {
@@ -147,26 +169,13 @@
                         loadingText.innerHTML = searchResponses[searchText];
                     } else {
                         loadingText.innerHTML = 'UNKNOWN';
-                        playSound(unknownSound); // Play unknown search sound
+                        playUnknownSound();
                     }
 
                     // Clear the search bar
                     searchBar.value = '';
                 }
             });
-
-            // Reset typing sound when page interaction occurs
-            document.addEventListener('mousemove', resetTypingSound);
-            document.addEventListener('scroll', resetTypingSound);
-            document.addEventListener('click', resetTypingSound);
-            document.addEventListener('keypress', resetTypingSound);
-
-            function resetTypingSound() {
-                // Reset the sound playing ability to ensure it continues to work
-                audioContext.close().then(() => {
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                });
-            }
         }
     </script>
 </body>
