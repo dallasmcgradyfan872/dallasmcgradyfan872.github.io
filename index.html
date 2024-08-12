@@ -26,24 +26,17 @@
         }
 
         .hidden-text {
-            color: rgba(255, 255, 255, 0); /* Initially invisible */
+            color: rgba(255, 255, 255, 0);
             transition: color 0.3s ease; /* Smooth transition */
             cursor: pointer;
         }
 
-        .hidden-text.zoomed {
-            color: rgba(255, 255, 255, 0.5); /* Slightly visible when zoomed in */
+        .hidden-text:hover {
+            color: rgba(255, 255, 255, 0.5); /* Slightly visible on hover */
         }
 
         .text-visible {
             color: rgba(255, 255, 255, 0.5); /* Slightly visible when triggered */
-        }
-
-        @media (max-width: 768px) {
-            /* Only apply this effect on mobile devices */
-            .hidden-text {
-                display: block;
-            }
         }
     </style>
     <script>
@@ -78,24 +71,6 @@
             textElement.addEventListener('click', function() {
                 window.location.href = '/computer';
             });
-
-            // Zoom detection for mobile
-            function checkZoom() {
-                const viewportWidth = document.documentElement.clientWidth;
-                const screenWidth = window.innerWidth;
-
-                if (viewportWidth < screenWidth) {
-                    // Zooming in detected
-                    textElement.classList.add('zoomed');
-                } else {
-                    // Zooming out detected
-                    textElement.classList.remove('zoomed');
-                }
-            }
-
-            // Detect zoom change
-            window.addEventListener('resize', checkZoom);
-            checkZoom(); // Initial check on page load
         });
     </script>
 </head>
@@ -106,7 +81,7 @@
             <font size="4">  
                 <p><span style="color: rgb(255, 255, 255);"><em>"In the image of Dallas McGrady we created them, the sigmas. <br />
                 A Sigma must follow the way of the Sigma. <br />
-                Dallas Mcgrady said, what is up my Rizzlers, go forth and vibe in this sigma paradise I so forth built"</em><br />
+                Dallas Mcgrady said, what is up my Rizzlers, go forth and vibe in this sigma paradise i so forth built"</em><br />
                 <font size="5">  
                 <b><em>- Dallas Mcgrady</em></b></span></p>
 
@@ -135,7 +110,7 @@
                 <br />
                 - <em>teachings on how to become a true sigma, just like dallas!</em> <br />
                 - <em>various beautiful images of the man himself, you're sure to love it!</em> <br />
-                - <em>learn about some amazing fun facts, dallas has a lot of knowledge to share!</em> <br />
+                - <em>learn about some amazing fun facts, dallas has alot of knowledge to share!</em> <br />
                 - <em>and much, much more!</em> <br />
                 <span class="hidden-text">- <em>searchforthetruth</em> <br /></span></p> 
             </center>
