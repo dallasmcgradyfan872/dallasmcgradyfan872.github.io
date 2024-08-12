@@ -27,8 +27,7 @@
         }
 
         .image-wrapper img {
-            width: 100%;
-            max-width: 585px;
+            width: 585px;
             height: auto;
             /* Prevent any visual feedback or interactions */
             user-select: none; /* Prevent text selection */
@@ -116,12 +115,13 @@
                 ];
                 let randomSound = sounds[Math.floor(Math.random() * sounds.length)];
 
-                // Stop all sounds and play the selected sound
+                // Stop any currently playing sound
                 sounds.forEach(sound => {
                     sound.pause();
                     sound.currentTime = 0;
                 });
 
+                // Play the selected sound
                 randomSound.play();
             }
 
@@ -129,20 +129,11 @@
                 let unknownSound = document.getElementById('unknown-sound');
                 unknownSound.pause();
                 unknownSound.currentTime = 0;
-
-                // Apply a computer-like audio effect (simple low-pass filter)
-                let audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                let source = audioContext.createMediaElementSource(unknownSound);
-                let filter = audioContext.createBiquadFilter();
-                filter.type = 'lowpass';
-                filter.frequency.value = 1500; // Adjust the frequency as needed
-                source.connect(filter);
-                filter.connect(audioContext.destination);
-
                 unknownSound.play();
             }
 
             let keysPressed = new Set();
+            let audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
             searchBar.addEventListener('keydown', (event) => {
                 if (!keysPressed.has(event.key) && event.key !== 'Enter') {
@@ -176,6 +167,19 @@
                     searchBar.value = '';
                 }
             });
+
+            // Reset typing sound when page interaction occurs
+            document.addEventListener('mousemove', resetTypingSound);
+            document.addEventListener('scroll', resetTypingSound);
+            document.addEventListener('click', resetTypingSound);
+            document.addEventListener('keypress', resetTypingSound);
+
+            function resetTypingSound() {
+                // Reset the sound playing ability to ensure it continues to work
+                audioContext.close().then(() => {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                });
+            }
         }
     </script>
 </body>
