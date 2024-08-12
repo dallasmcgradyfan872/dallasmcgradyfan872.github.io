@@ -75,6 +75,7 @@
     <audio id="type-sound1" src="/assets/audio/sounds/type1.mp3"></audio>
     <audio id="type-sound2" src="/assets/audio/sounds/type2.mp3"></audio>
     <audio id="type-sound3" src="/assets/audio/sounds/type3.mp3"></audio>
+    <audio id="unknown-sound" src="/assets/audio/sounds/unknownsearch.mp3"></audio>
 
     <script>
         // Check if accessed directly and redirect
@@ -103,34 +104,33 @@
                         loadingText.innerHTML = 'SEARCH';
                         searchBar.style.display = 'block';
                     }
-                }, 100);
-            }, 500); // Delay before starting the fade-in
+                }, 500); // Delay before starting the fade-in
 
-            function playRandomSound() {
-                let sounds = [
-                    document.getElementById('type-sound1'),
-                    document.getElementById('type-sound2'),
-                    document.getElementById('type-sound3')
-                ];
-                let randomSound = sounds[Math.floor(Math.random() * sounds.length)];
-
-                // Play the selected sound
-                randomSound.currentTime = 0; // Reset sound to start
-                randomSound.play();
-            }
-
-            let keysPressed = new Set();
             let audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-            searchBar.addEventListener('keydown', (event) => {
-                if (!keysPressed.has(event.key)) {
-                    keysPressed.add(event.key);
-                    playRandomSound();
-                }
-            });
+            let typeSounds = [
+                document.getElementById('type-sound1'),
+                document.getElementById('type-sound2'),
+                document.getElementById('type-sound3')
+            ];
+            let unknownSound = document.getElementById('unknown-sound');
+            let activeSound = null; // Track the currently playing sound
 
-            searchBar.addEventListener('keyup', (event) => {
-                keysPressed.delete(event.key);
+            function playSound(sound) {
+                if (activeSound) {
+                    activeSound.pause();
+                    activeSound.currentTime = 0;
+                }
+
+                activeSound = sound;
+                sound.play();
+            }
+
+            searchBar.addEventListener('keydown', (event) => {
+                if (!event.repeat) { // Prevent repeated keydown events from causing overlap
+                    let randomSound = typeSounds[Math.floor(Math.random() * typeSounds.length)];
+                    playSound(randomSound);
+                }
             });
 
             searchBar.addEventListener('keypress', function(event) {
@@ -147,6 +147,7 @@
                         loadingText.innerHTML = searchResponses[searchText];
                     } else {
                         loadingText.innerHTML = 'UNKNOWN';
+                        playSound(unknownSound); // Play unknown search sound
                     }
 
                     // Clear the search bar
