@@ -60,44 +60,33 @@
         }
 
         #media-overlay {
-            display: none; /* Hidden initially */
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            display: flex;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none; /* Initially hidden */
             justify-content: center;
             align-items: center;
             z-index: 10;
-            user-select: none;
         }
 
         #media-overlay img {
-            cursor: pointer;
+            width: 300px;
+            height: auto;
         }
 
         #close-button {
-            position: absolute;
-            bottom: 20px;
+            display: none; /* Initially hidden */
+            margin-top: 20px;
             font-size: 20px;
-            color: white;
-            background-color: black;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 10px 20px;
             cursor: pointer;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translate(0, 0); }
-            20%, 60% { transform: translate(-10px, 0); }
-            40%, 80% { transform: translate(10px, 0); }
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+            color: white;
+            background-color: red;
+            border: none;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -113,8 +102,8 @@
     </div>
 
     <div id="media-overlay">
-        <img id="easter-egg-image" src="/assets/images/easteregg.png" alt="Easter Egg">
-        <div id="close-button" onclick="closeOverlay()">Close</div>
+        <img id="easteregg-img" src="/assets/images/easteregg.png" alt="easteregg.png">
+        <button id="close-button">Close</button>
     </div>
 
     <!-- Audio elements for key press sounds -->
@@ -125,7 +114,8 @@
 
     <script>
         let clickCount = 0;
-        let easterEggActivated = false;
+        const maxClicks = 30;
+        let hasClicked30Times = false;
 
         // Check if accessed directly and redirect
         if (document.referrer === '') {
@@ -136,9 +126,10 @@
 
             let loadingText = document.getElementById('loading-text');
             let searchBar = document.getElementById('search-bar');
-            let mediaOverlay = document.getElementById('media-overlay');
-            let easterEggImage = document.getElementById('easter-egg-image');
             let percentage = 0;
+            let mediaOverlay = document.getElementById('media-overlay');
+            let closeButton = document.getElementById('close-button');
+            let eastereggImg = document.getElementById('easteregg-img');
 
             // Start fade-in animation and loading process
             setTimeout(() => {
@@ -204,14 +195,22 @@
                     // Dictionary of search terms and corresponding responses
                     const searchResponses = {
                         'test': 'LOREM IPSUM',
-                        'easteregg': 'SUPRISE',
+                        'easteregg': 'SUPRISE'
                         // Add more search terms and responses here
                     };
 
                     if (searchResponses[searchText]) {
                         loadingText.innerHTML = searchResponses[searchText];
+
+                        // Handle easter egg display
                         if (searchText === 'easteregg') {
-                            activateEasterEgg();
+                            mediaOverlay.style.display = 'flex';
+                            closeButton.style.display = 'block';
+
+                            eastereggImg.src = '/assets/images/easteregg.png';
+                            eastereggImg.style.animation = 'none';
+                            clickCount = 0;
+                            hasClicked30Times = false;
                         }
                     } else {
                         loadingText.innerHTML = 'UNKNOWN';
@@ -223,32 +222,21 @@
                 }
             });
 
-            function activateEasterEgg() {
-                easterEggImage.src = '/assets/images/easteregg.png';
-                clickCount = 0;
-                easterEggActivated = false;
-                mediaOverlay.style.display = 'flex';
-            }
-
-            easterEggImage.addEventListener('click', () => {
-                if (easterEggActivated) return;
-
+            eastereggImg.addEventListener('click', () => {
                 clickCount++;
-                if (clickCount >= 30) {
-                    easterEggImage.src = '/assets/images/notdallads.png';
-                    easterEggImage.style.animation = 'bounce 0.5s infinite';
-                    easterEggActivated = true;
-                } else {
-                    easterEggImage.style.animation = 'shake 0.5s';
-                    setTimeout(() => {
-                        easterEggImage.style.animation = '';
-                    }, 500);
+                if (clickCount >= maxClicks && !hasClicked30Times) {
+                    eastereggImg.src = '/assets/images/notdallads.png';
+                    eastereggImg.style.animation = 'bounce 0.5s infinite';
+                    hasClicked30Times = true;
+                } else if (clickCount < maxClicks) {
+                    eastereggImg.style.animation = 'shake 0.5s';
                 }
             });
 
-            function closeOverlay() {
+            closeButton.addEventListener('click', () => {
                 mediaOverlay.style.display = 'none';
-            }
+                closeButton.style.display = 'none';
+            });
 
             // Reset typing sound when page interaction occurs
             document.addEventListener('mousemove', resetTypingSound);
