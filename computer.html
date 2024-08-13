@@ -59,72 +59,45 @@
             border-radius: 10px;
         }
 
-        .media-overlay {
-            display: none; /* Hide media overlay initially */
+        #media-overlay {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 10;
+            user-select: none;
         }
 
-        .media-content {
-            max-width: 90%;
-            max-height: 90%;
+        #media-overlay img {
             cursor: pointer;
-        }
-
-        .shaking {
-            animation: shake 0.3s;
-        }
-
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            70% { transform: translate(3px, 1px) rotate(-1deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translate(1px, 2px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
-        }
-
-        .bouncing {
-            animation: bounce 1s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
-            }
-            40% {
-                transform: translateY(-30px);
-            }
-            60% {
-                transform: translateY(-15px);
-            }
         }
 
         #close-button {
-            display: none; /* Hide close button initially */
             position: absolute;
             bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 18px;
-            padding: 10px 20px;
-            background-color: white;
-            color: black;
-            border: none;
+            font-size: 20px;
+            color: white;
+            background-color: black;
+            padding: 10px;
             border-radius: 5px;
             cursor: pointer;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0); }
+            20%, 60% { transform: translate(-10px, 0); }
+            40%, 80% { transform: translate(10px, 0); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
     </style>
 </head>
@@ -139,9 +112,9 @@
         </div>
     </div>
 
-    <div class="media-overlay" id="media-overlay">
-        <img src="" id="media-image" class="media-content" alt="Media">
-        <button id="close-button" onclick="closeMedia()">Close</button>
+    <div id="media-overlay">
+        <img id="easter-egg-image" src="/assets/images/easteregg.png" alt="Easter Egg">
+        <div id="close-button" onclick="closeOverlay()">Close</div>
     </div>
 
     <!-- Audio elements for key press sounds -->
@@ -152,7 +125,7 @@
 
     <script>
         let clickCount = 0;
-        let clickedBefore = false;
+        let easterEggActivated = false;
 
         // Check if accessed directly and redirect
         if (document.referrer === '') {
@@ -163,6 +136,8 @@
 
             let loadingText = document.getElementById('loading-text');
             let searchBar = document.getElementById('search-bar');
+            let mediaOverlay = document.getElementById('media-overlay');
+            let easterEggImage = document.getElementById('easter-egg-image');
             let percentage = 0;
 
             // Start fade-in animation and loading process
@@ -208,43 +183,6 @@
                 unknownSound.play();
             }
 
-            function showMedia(mediaType, src) {
-                let mediaOverlay = document.getElementById('media-overlay');
-                let mediaImage = document.getElementById('media-image');
-                let closeButton = document.getElementById('close-button');
-
-                mediaImage.src = src;
-                mediaImage.style.display = 'block';
-                mediaOverlay.style.display = 'flex';
-                closeButton.style.display = 'block';
-            }
-
-            function closeMedia() {
-                let mediaOverlay = document.getElementById('media-overlay');
-                let mediaImage = document.getElementById('media-image');
-                let closeButton = document.getElementById('close-button');
-
-                mediaOverlay.style.display = 'none';
-                mediaImage.style.display = 'none';
-                closeButton.style.display = 'none';
-            }
-
-            function handleEasterEggClick() {
-                clickCount++;
-
-                let mediaImage = document.getElementById('media-image');
-
-                if (clickCount >= 30) {
-                    mediaImage.src = '/assets/images/notdallads.png';
-                    mediaImage.classList.remove('shaking');
-                    mediaImage.classList.add('bouncing');
-                    clickedBefore = true;
-                } else {
-                    mediaImage.classList.add('shaking');
-                    setTimeout(() => mediaImage.classList.remove('shaking'), 300);
-                }
-            }
-
             let keysPressed = new Set();
             let audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -259,25 +197,71 @@
                 keysPressed.delete(event.key);
             });
 
-            searchBar.addEventListener('keypress', (event) => {
+            searchBar.addEventListener('keypress', function(event) {
                 if (event.key === 'Enter') {
-                    let searchTerm = searchBar.value.trim().toLowerCase();
-                    if (searchTerm === 'test') {
-                        loadingText.textContent = 'LOREM IPSUM';
-                    } else if (searchTerm === 'easteregg') {
-                        loadingText.textContent = 'SURPRISE';
-                        if (clickedBefore) {
-                            showMedia('image', '/assets/images/notdallads.png');
-                        } else {
-                            showMedia('image', '/assets/images/easteregg.png');
-                            document.getElementById('media-image').onclick = handleEasterEggClick;
+                    const searchText = searchBar.value.toLowerCase().trim();
+
+                    // Dictionary of search terms and corresponding responses
+                    const searchResponses = {
+                        'test': 'LOREM IPSUM',
+                        'easteregg': 'SUPRISE',
+                        // Add more search terms and responses here
+                    };
+
+                    if (searchResponses[searchText]) {
+                        loadingText.innerHTML = searchResponses[searchText];
+                        if (searchText === 'easteregg') {
+                            activateEasterEgg();
                         }
                     } else {
-                        loadingText.textContent = 'UNKNOWN';
+                        loadingText.innerHTML = 'UNKNOWN';
                         playUnknownSound();
                     }
+
+                    // Clear the search bar
+                    searchBar.value = '';
                 }
             });
+
+            function activateEasterEgg() {
+                easterEggImage.src = '/assets/images/easteregg.png';
+                clickCount = 0;
+                easterEggActivated = false;
+                mediaOverlay.style.display = 'flex';
+            }
+
+            easterEggImage.addEventListener('click', () => {
+                if (easterEggActivated) return;
+
+                clickCount++;
+                if (clickCount >= 30) {
+                    easterEggImage.src = '/assets/images/notdallads.png';
+                    easterEggImage.style.animation = 'bounce 0.5s infinite';
+                    easterEggActivated = true;
+                } else {
+                    easterEggImage.style.animation = 'shake 0.5s';
+                    setTimeout(() => {
+                        easterEggImage.style.animation = '';
+                    }, 500);
+                }
+            });
+
+            function closeOverlay() {
+                mediaOverlay.style.display = 'none';
+            }
+
+            // Reset typing sound when page interaction occurs
+            document.addEventListener('mousemove', resetTypingSound);
+            document.addEventListener('scroll', resetTypingSound);
+            document.addEventListener('click', resetTypingSound);
+            document.addEventListener('keypress', resetTypingSound);
+
+            function resetTypingSound() {
+                // Reset the sound playing ability to ensure it continues to work
+                audioContext.close().then(() => {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                });
+            }
         }
     </script>
 </body>
