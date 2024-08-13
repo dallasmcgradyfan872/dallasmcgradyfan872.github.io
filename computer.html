@@ -59,34 +59,60 @@
             border-radius: 10px;
         }
 
-        #media-overlay {
-            position: fixed;
+        #media-overlay, #close-button {
+            display: none; /* Initially hidden */
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.8);
-            display: none; /* Initially hidden */
             justify-content: center;
             align-items: center;
-            z-index: 10;
-        }
-
-        #media-overlay img {
-            width: 300px;
-            height: auto;
+            text-align: center;
         }
 
         #close-button {
-            display: none; /* Initially hidden */
-            margin-top: 20px;
-            font-size: 20px;
-            padding: 10px 20px;
-            cursor: pointer;
+            top: auto;
+            bottom: 20px;
+            font-size: 24px;
             color: white;
-            background-color: red;
-            border: none;
-            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #easter-egg {
+            width: 300px;
+            height: auto;
+            cursor: pointer;
+        }
+
+        .bounce {
+            animation: bounce 0.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            to {
+                transform: translateY(-20px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-5px);
+            }
+            50% {
+                transform: translateX(5px);
+            }
+            75% {
+                transform: translateX(-5px);
+            }
         }
     </style>
 </head>
@@ -101,9 +127,10 @@
         </div>
     </div>
 
+    <!-- Easter Egg Overlay -->
     <div id="media-overlay">
-        <img id="easteregg-img" src="/assets/images/easteregg.png" alt="easteregg.png">
-        <button id="close-button">Close</button>
+        <img id="easter-egg" src="/assets/images/easteregg.png" alt="Easter Egg">
+        <div id="close-button">CLOSE</div>
     </div>
 
     <!-- Audio elements for key press sounds -->
@@ -113,27 +140,21 @@
     <audio id="unknown-sound" src="/assets/audio/sounds/unknownsearch.mp3"></audio>
 
     <script>
-        let clickCount = 0;
-        const maxClicks = 30;
-        let hasClicked30Times = false;
-
-        // Check if accessed directly and redirect
         if (document.referrer === '') {
             window.location.href = '/index';
         } else {
-            // Set body visibility to visible for proper content display
             document.body.style.visibility = 'visible';
 
             let loadingText = document.getElementById('loading-text');
             let searchBar = document.getElementById('search-bar');
             let percentage = 0;
+            let eggClicks = 0;
+            let easterEggImg = document.getElementById('easter-egg');
             let mediaOverlay = document.getElementById('media-overlay');
             let closeButton = document.getElementById('close-button');
-            let eastereggImg = document.getElementById('easteregg-img');
 
-            // Start fade-in animation and loading process
             setTimeout(() => {
-                document.body.style.opacity = 1; // Fade in the body
+                document.body.style.opacity = 1;
 
                 let loadingInterval = setInterval(() => {
                     let increment = Math.floor(Math.random() * 4) + 2;
@@ -147,7 +168,7 @@
                         searchBar.style.display = 'block';
                     }
                 }, 100);
-            }, 500); // Delay before starting the fade-in
+            }, 500);
 
             function playRandomSound() {
                 let sounds = [
@@ -156,14 +177,10 @@
                     document.getElementById('type-sound3')
                 ];
                 let randomSound = sounds[Math.floor(Math.random() * sounds.length)];
-
-                // Stop any currently playing sound
                 sounds.forEach(sound => {
                     sound.pause();
                     sound.currentTime = 0;
                 });
-
-                // Play the selected sound
                 randomSound.play();
             }
 
@@ -191,66 +208,4 @@
             searchBar.addEventListener('keypress', function(event) {
                 if (event.key === 'Enter') {
                     const searchText = searchBar.value.toLowerCase().trim();
-
-                    // Dictionary of search terms and corresponding responses
-                    const searchResponses = {
-                        'test': 'LOREM IPSUM',
-                        'easteregg': 'SUPRISE'
-                        // Add more search terms and responses here
-                    };
-
-                    if (searchResponses[searchText]) {
-                        loadingText.innerHTML = searchResponses[searchText];
-
-                        // Handle easter egg display
-                        if (searchText === 'easteregg') {
-                            mediaOverlay.style.display = 'flex';
-                            closeButton.style.display = 'block';
-
-                            eastereggImg.src = '/assets/images/easteregg.png';
-                            eastereggImg.style.animation = 'none';
-                            clickCount = 0;
-                            hasClicked30Times = false;
-                        }
-                    } else {
-                        loadingText.innerHTML = 'UNKNOWN';
-                        playUnknownSound();
-                    }
-
-                    // Clear the search bar
-                    searchBar.value = '';
-                }
-            });
-
-            eastereggImg.addEventListener('click', () => {
-                clickCount++;
-                if (clickCount >= maxClicks && !hasClicked30Times) {
-                    eastereggImg.src = '/assets/images/notdallads.png';
-                    eastereggImg.style.animation = 'bounce 0.5s infinite';
-                    hasClicked30Times = true;
-                } else if (clickCount < maxClicks) {
-                    eastereggImg.style.animation = 'shake 0.5s';
-                }
-            });
-
-            closeButton.addEventListener('click', () => {
-                mediaOverlay.style.display = 'none';
-                closeButton.style.display = 'none';
-            });
-
-            // Reset typing sound when page interaction occurs
-            document.addEventListener('mousemove', resetTypingSound);
-            document.addEventListener('scroll', resetTypingSound);
-            document.addEventListener('click', resetTypingSound);
-            document.addEventListener('keypress', resetTypingSound);
-
-            function resetTypingSound() {
-                // Reset the sound playing ability to ensure it continues to work
-                audioContext.close().then(() => {
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                });
-            }
-        }
-    </script>
-</body>
-</html>
+                    searchBar
