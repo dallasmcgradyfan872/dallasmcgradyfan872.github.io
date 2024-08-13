@@ -29,7 +29,6 @@
         .image-wrapper img {
             width: 585px;
             height: auto;
-            /* Prevent any visual feedback or interactions */
             user-select: none; /* Prevent text selection */
             pointer-events: none; /* Prevent mouse interactions */
         }
@@ -58,6 +57,41 @@
             text-align: center;
             border-radius: 10px;
         }
+
+        .media-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it covers everything */
+            flex-direction: column;
+        }
+
+        .media-overlay img, .media-overlay video {
+            max-width: 90%;
+            max-height: 80%;
+        }
+
+        .close-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            color: white;
+            background-color: #333;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .close-button:hover {
+            background-color: #555;
+        }
     </style>
 </head>
 <body>
@@ -71,6 +105,11 @@
         </div>
     </div>
 
+    <div class="media-overlay" id="media-overlay">
+        <div id="media-content"></div>
+        <button class="close-button" id="close-button">Close</button>
+    </div>
+
     <!-- Audio elements for key press sounds -->
     <audio id="type-sound1" src="/assets/audio/sounds/type1.mp3"></audio>
     <audio id="type-sound2" src="/assets/audio/sounds/type2.mp3"></audio>
@@ -78,20 +117,20 @@
     <audio id="unknown-sound" src="/assets/audio/sounds/unknownsearch.mp3"></audio>
 
     <script>
-        // Check if accessed directly and redirect
         if (document.referrer === '') {
             window.location.href = '/index';
         } else {
-            // Set body visibility to visible for proper content display
             document.body.style.visibility = 'visible';
 
             let loadingText = document.getElementById('loading-text');
             let searchBar = document.getElementById('search-bar');
+            let mediaOverlay = document.getElementById('media-overlay');
+            let mediaContent = document.getElementById('media-content');
+            let closeButton = document.getElementById('close-button');
             let percentage = 0;
 
-            // Start fade-in animation and loading process
             setTimeout(() => {
-                document.body.style.opacity = 1; // Fade in the body
+                document.body.style.opacity = 1;
 
                 let loadingInterval = setInterval(() => {
                     let increment = Math.floor(Math.random() * 4) + 2;
@@ -105,7 +144,7 @@
                         searchBar.style.display = 'block';
                     }
                 }, 100);
-            }, 500); // Delay before starting the fade-in
+            }, 500);
 
             function playRandomSound() {
                 let sounds = [
@@ -115,13 +154,11 @@
                 ];
                 let randomSound = sounds[Math.floor(Math.random() * sounds.length)];
 
-                // Stop any currently playing sound
                 sounds.forEach(sound => {
                     sound.pause();
                     sound.currentTime = 0;
                 });
 
-                // Play the selected sound
                 randomSound.play();
             }
 
@@ -150,32 +187,40 @@
                 if (event.key === 'Enter') {
                     const searchText = searchBar.value.toLowerCase().trim();
 
-                    // Dictionary of search terms and corresponding responses
                     const searchResponses = {
                         'test': 'LOREM IPSUM',
+                        'show image': '<img src="/assets/images/sample-image.jpg" alt="Sample Image">',
+                        'play video': '<video controls src="/assets/videos/sample-video.mp4"></video>',
                         // Add more search terms and responses here
                     };
 
                     if (searchResponses[searchText]) {
-                        loadingText.innerHTML = searchResponses[searchText];
+                        if (searchText === 'show image' || searchText === 'play video') {
+                            mediaContent.innerHTML = searchResponses[searchText];
+                            mediaOverlay.style.display = 'flex';
+                        } else {
+                            loadingText.innerHTML = searchResponses[searchText];
+                        }
                     } else {
                         loadingText.innerHTML = 'UNKNOWN';
                         playUnknownSound();
                     }
 
-                    // Clear the search bar
                     searchBar.value = '';
                 }
             });
 
-            // Reset typing sound when page interaction occurs
+            closeButton.addEventListener('click', () => {
+                mediaOverlay.style.display = 'none';
+                mediaContent.innerHTML = '';
+            });
+
             document.addEventListener('mousemove', resetTypingSound);
             document.addEventListener('scroll', resetTypingSound);
             document.addEventListener('click', resetTypingSound);
             document.addEventListener('keypress', resetTypingSound);
 
             function resetTypingSound() {
-                // Reset the sound playing ability to ensure it continues to work
                 audioContext.close().then(() => {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 });
