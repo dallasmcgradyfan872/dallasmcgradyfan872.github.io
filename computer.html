@@ -59,60 +59,37 @@
             border-radius: 10px;
         }
 
-        #media-overlay, #close-button {
-            display: none; /* Initially hidden */
-            position: absolute;
+        #media-overlay, #close-btn {
+            display: none; /* Hide media overlay and close button initially */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.8);
             justify-content: center;
             align-items: center;
-            text-align: center;
+            z-index: 9999;
         }
 
-        #close-button {
-            top: auto;
-            bottom: 20px;
-            font-size: 24px;
-            color: white;
+        #media-content {
+            position: relative;
+        }
+
+        #close-btn {
+            display: none; /* Ensure close button is hidden initially */
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            color: black;
+            padding: 10px;
             cursor: pointer;
         }
 
-        #easter-egg {
-            width: 300px;
-            height: auto;
-            cursor: pointer;
-        }
-
-        .bounce {
-            animation: bounce 0.5s infinite alternate;
-        }
-
-        @keyframes bounce {
-            to {
-                transform: translateY(-20px);
-            }
-        }
-
-        .shake {
-            animation: shake 0.3s;
-        }
-
-        @keyframes shake {
-            0%, 100% {
-                transform: translateX(0);
-            }
-            25% {
-                transform: translateX(-5px);
-            }
-            50% {
-                transform: translateX(5px);
-            }
-            75% {
-                transform: translateX(-5px);
-            }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
@@ -127,10 +104,11 @@
         </div>
     </div>
 
-    <!-- Easter Egg Overlay -->
-    <div id="media-overlay">
-        <img id="easter-egg" src="/assets/images/easteregg.png" alt="Easter Egg">
-        <div id="close-button">CLOSE</div>
+    <div id="media-overlay" class="hidden">
+        <div id="media-content">
+            <img id="easter-egg" src="/assets/images/easteregg.png" alt="easteregg" style="width: 50%; cursor: pointer;">
+        </div>
+        <div id="close-btn" class="hidden">Close</div>
     </div>
 
     <!-- Audio elements for key press sounds -->
@@ -140,21 +118,24 @@
     <audio id="unknown-sound" src="/assets/audio/sounds/unknownsearch.mp3"></audio>
 
     <script>
+        // Check if accessed directly and redirect
         if (document.referrer === '') {
             window.location.href = '/index';
         } else {
+            // Set body visibility to visible for proper content display
             document.body.style.visibility = 'visible';
 
             let loadingText = document.getElementById('loading-text');
             let searchBar = document.getElementById('search-bar');
-            let percentage = 0;
-            let eggClicks = 0;
-            let easterEggImg = document.getElementById('easter-egg');
             let mediaOverlay = document.getElementById('media-overlay');
-            let closeButton = document.getElementById('close-button');
+            let closeBtn = document.getElementById('close-btn');
+            let easterEgg = document.getElementById('easter-egg');
+            let percentage = 0;
+            let clickCount = 0;
 
+            // Start fade-in animation and loading process
             setTimeout(() => {
-                document.body.style.opacity = 1;
+                document.body.style.opacity = 1; // Fade in the body
 
                 let loadingInterval = setInterval(() => {
                     let increment = Math.floor(Math.random() * 4) + 2;
@@ -168,7 +149,7 @@
                         searchBar.style.display = 'block';
                     }
                 }, 100);
-            }, 500);
+            }, 500); // Delay before starting the fade-in
 
             function playRandomSound() {
                 let sounds = [
@@ -177,10 +158,14 @@
                     document.getElementById('type-sound3')
                 ];
                 let randomSound = sounds[Math.floor(Math.random() * sounds.length)];
+
+                // Stop any currently playing sound
                 sounds.forEach(sound => {
                     sound.pause();
                     sound.currentTime = 0;
                 });
+
+                // Play the selected sound
                 randomSound.play();
             }
 
@@ -208,4 +193,61 @@
             searchBar.addEventListener('keypress', function(event) {
                 if (event.key === 'Enter') {
                     const searchText = searchBar.value.toLowerCase().trim();
-                    searchBar
+
+                    // Dictionary of search terms and corresponding responses
+                    const searchResponses = {
+                        'test': 'LOREM IPSUM',
+                        'easteregg': 'SURPRISE',
+                        // Add more search terms and responses here
+                    };
+
+                    if (searchResponses[searchText]) {
+                        loadingText.innerHTML = searchResponses[searchText];
+
+                        if (searchText === 'easteregg') {
+                            mediaOverlay.classList.remove('hidden');
+                            closeBtn.classList.remove('hidden');
+
+                            // Reset Easter egg image and click count
+                            easterEgg.src = '/assets/images/easteregg.png';
+                            clickCount = 0;
+
+                            easterEgg.addEventListener('click', function() {
+                                clickCount++;
+                                if (clickCount >= 30) {
+                                    easterEgg.src = '/assets/images/notdallads.png';
+                                    easterEgg.style.animation = 'bounce 0.5s infinite';
+                                }
+                            });
+
+                            closeBtn.addEventListener('click', function() {
+                                mediaOverlay.classList.add('hidden');
+                                closeBtn.classList.add('hidden');
+                            });
+                        }
+                    } else {
+                        loadingText.innerHTML = 'UNKNOWN';
+                        playUnknownSound();
+                    }
+
+                    // Clear the search bar
+                    searchBar.value = '';
+                }
+            });
+
+            // Reset typing sound when page interaction occurs
+            document.addEventListener('mousemove', resetTypingSound);
+            document.addEventListener('scroll', resetTypingSound);
+            document.addEventListener('click', resetTypingSound);
+            document.addEventListener('keypress', resetTypingSound);
+
+            function resetTypingSound() {
+                // Reset the sound playing ability to ensure it continues to work
+                audioContext.close().then(() => {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                });
+            }
+        }
+    </script>
+</body>
+</html>
