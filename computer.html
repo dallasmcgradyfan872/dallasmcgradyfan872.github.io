@@ -29,6 +29,7 @@
         .image-wrapper img {
             width: 585px;
             height: auto;
+            /* Prevent any visual feedback or interactions */
             user-select: none; /* Prevent text selection */
             pointer-events: none; /* Prevent mouse interactions */
         }
@@ -59,38 +60,36 @@
         }
 
         .media-overlay {
-            display: none; /* Initially hidden */
+            display: none; /* Hide media overlay initially */
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
             justify-content: center;
             align-items: center;
-            z-index: 1000; /* Ensure it covers everything */
-            flex-direction: column;
+            z-index: 1000;
         }
 
-        .media-overlay img, .media-overlay video {
+        .media-content {
             max-width: 90%;
-            max-height: 80%;
+            max-height: 90%;
         }
 
-        .close-button {
-            margin-top: 20px;
-            padding: 10px 20px;
+        #close-button {
+            display: none; /* Hide close button initially */
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             font-size: 18px;
-            color: white;
-            background-color: #333;
+            padding: 10px 20px;
+            background-color: white;
+            color: black;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-        }
-
-        .close-button:hover {
-            background-color: #555;
         }
     </style>
 </head>
@@ -106,8 +105,9 @@
     </div>
 
     <div class="media-overlay" id="media-overlay">
-        <div id="media-content"></div>
-        <button class="close-button" id="close-button">Close</button>
+        <img src="" id="media-image" class="media-content" alt="Media">
+        <video src="" id="media-video" class="media-content" controls></video>
+        <button id="close-button" onclick="closeMedia()">Close</button>
     </div>
 
     <!-- Audio elements for key press sounds -->
@@ -117,20 +117,20 @@
     <audio id="unknown-sound" src="/assets/audio/sounds/unknownsearch.mp3"></audio>
 
     <script>
+        // Check if accessed directly and redirect
         if (document.referrer === '') {
             window.location.href = '/index';
         } else {
+            // Set body visibility to visible for proper content display
             document.body.style.visibility = 'visible';
 
             let loadingText = document.getElementById('loading-text');
             let searchBar = document.getElementById('search-bar');
-            let mediaOverlay = document.getElementById('media-overlay');
-            let mediaContent = document.getElementById('media-content');
-            let closeButton = document.getElementById('close-button');
             let percentage = 0;
 
+            // Start fade-in animation and loading process
             setTimeout(() => {
-                document.body.style.opacity = 1;
+                document.body.style.opacity = 1; // Fade in the body
 
                 let loadingInterval = setInterval(() => {
                     let increment = Math.floor(Math.random() * 4) + 2;
@@ -144,7 +144,7 @@
                         searchBar.style.display = 'block';
                     }
                 }, 100);
-            }, 500);
+            }, 500); // Delay before starting the fade-in
 
             function playRandomSound() {
                 let sounds = [
@@ -154,11 +154,13 @@
                 ];
                 let randomSound = sounds[Math.floor(Math.random() * sounds.length)];
 
+                // Stop any currently playing sound
                 sounds.forEach(sound => {
                     sound.pause();
                     sound.currentTime = 0;
                 });
 
+                // Play the selected sound
                 randomSound.play();
             }
 
@@ -167,6 +169,38 @@
                 unknownSound.pause();
                 unknownSound.currentTime = 0;
                 unknownSound.play();
+            }
+
+            function showMedia(mediaType, src) {
+                let mediaOverlay = document.getElementById('media-overlay');
+                let mediaImage = document.getElementById('media-image');
+                let mediaVideo = document.getElementById('media-video');
+                let closeButton = document.getElementById('close-button');
+
+                if (mediaType === 'image') {
+                    mediaImage.src = src;
+                    mediaImage.style.display = 'block';
+                    mediaVideo.style.display = 'none';
+                } else if (mediaType === 'video') {
+                    mediaVideo.src = src;
+                    mediaVideo.style.display = 'block';
+                    mediaImage.style.display = 'none';
+                }
+
+                mediaOverlay.style.display = 'flex';
+                closeButton.style.display = 'block';
+            }
+
+            function closeMedia() {
+                let mediaOverlay = document.getElementById('media-overlay');
+                let mediaImage = document.getElementById('media-image');
+                let mediaVideo = document.getElementById('media-video');
+                let closeButton = document.getElementById('close-button');
+
+                mediaOverlay.style.display = 'none';
+                mediaImage.style.display = 'none';
+                mediaVideo.style.display = 'none';
+                closeButton.style.display = 'none';
             }
 
             let keysPressed = new Set();
@@ -187,40 +221,38 @@
                 if (event.key === 'Enter') {
                     const searchText = searchBar.value.toLowerCase().trim();
 
+                    // Dictionary of search terms and corresponding responses
                     const searchResponses = {
                         'test': 'LOREM IPSUM',
-                        'show image': '<img src="/assets/images/sample-image.jpg" alt="Sample Image">',
-                        'play video': '<video controls src="/assets/videos/sample-video.mp4"></video>',
+                        'showimage': { type: 'image', src: '/assets/images/sample.jpg' },
+                        'showvideo': { type: 'video', src: '/assets/videos/sample.mp4' },
                         // Add more search terms and responses here
                     };
 
                     if (searchResponses[searchText]) {
-                        if (searchText === 'show image' || searchText === 'play video') {
-                            mediaContent.innerHTML = searchResponses[searchText];
-                            mediaOverlay.style.display = 'flex';
-                        } else {
+                        if (typeof searchResponses[searchText] === 'string') {
                             loadingText.innerHTML = searchResponses[searchText];
+                        } else {
+                            showMedia(searchResponses[searchText].type, searchResponses[searchText].src);
                         }
                     } else {
                         loadingText.innerHTML = 'UNKNOWN';
                         playUnknownSound();
                     }
 
+                    // Clear the search bar
                     searchBar.value = '';
                 }
             });
 
-            closeButton.addEventListener('click', () => {
-                mediaOverlay.style.display = 'none';
-                mediaContent.innerHTML = '';
-            });
-
+            // Reset typing sound when page interaction occurs
             document.addEventListener('mousemove', resetTypingSound);
             document.addEventListener('scroll', resetTypingSound);
             document.addEventListener('click', resetTypingSound);
             document.addEventListener('keypress', resetTypingSound);
 
             function resetTypingSound() {
+                // Reset the sound playing ability to ensure it continues to work
                 audioContext.close().then(() => {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 });
